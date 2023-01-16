@@ -12,27 +12,15 @@ export default function ProductRegistration() {
         setValue,
         reset,
         formState: { errors },
-      } = useForm()
+    } = useForm()
     
-      const onSubmit = async (data) => {
-        const notify = () => toast.success('Produto adicionado ao estoque!')
-        notify()
-        const newBookData = JSON.stringify(data)
-        //Mandar objeto para API
-        reset()
-      }
-    
-      async function fetchZipCode(code) {
-        const zipCodeFiltered = code.target.value
-        if (zipCodeFiltered.length < 8 || zipCodeFiltered.length > 8) {
-          return
-        }
-        const response = await zipCodeApi.get(`/${zipCodeFiltered}/json/`)
-    
-        setValue('address', response.data.logradouro)
-        setValue('district', response.data.bairro)
-        setValue('city', response.data.localidade)
-      }
+    const onSubmit = async (data) => {
+    const notify = () => toast.success('Produto adicionado ao estoque!')
+    notify()
+    const newBookData = JSON.stringify(data)
+    //Mandar objeto para API
+    reset()
+    }
 
     return (
         <>
