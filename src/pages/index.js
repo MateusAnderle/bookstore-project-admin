@@ -2,11 +2,11 @@ import { B, BookDescription, Booklist, BookTitle, Container, ContentWrapper, Tit
 import Head from 'next/head'
 import Image from 'next/image'
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react'
 import { api } from '@/utils/api'
 import Loader from '@/components/Loader'
 import { PencilSimple, Trash } from 'phosphor-react'
-
 import { Oval } from  'react-loader-spinner'
 import { useRouter } from 'next/router'
 
