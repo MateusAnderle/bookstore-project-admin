@@ -1,11 +1,12 @@
 import { B, BookDescription, Booklist, BookTitle, Container, ContentWrapper, Title, ImageAndContent, ButtonIcons } from '@/styles/pages/home'
 import Head from 'next/head'
 import Image from 'next/image'
+import { ToastContainer, toast } from 'react-toastify';
 import { useEffect, useState } from 'react'
 import { api } from '@/utils/api'
 import Loader from '@/components/Loader'
 import { PencilSimple, Trash } from 'phosphor-react'
-import { ToastContainer, toast } from 'react-toastify';
+
 import { Oval } from  'react-loader-spinner'
 import { useRouter } from 'next/router'
 
@@ -52,20 +53,20 @@ export default function Home() {
       </Head>
          
       <main>
+        <ToastContainer
+          style={{ marginTop: '60px' }}
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
           <Title>Produtos cadastrados</Title>
-          <ToastContainer
-            style={{ marginTop: '60px' }}
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
         <Container>
           <ul>
 
