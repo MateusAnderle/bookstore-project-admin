@@ -5,22 +5,53 @@ import { useForm } from 'react-hook-form'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Oval } from  'react-loader-spinner'
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Loader from "@/components/Loader";
 
 export default function ProductRegistration() {
-    const [isLoading, seIsLoading] = useState(false)
+    const router = useRouter()
+    const id = router.query.id
+    const [isLoading, setIsLoading] = useState(false)
+    const [isLoader, setIsLoader] = useState(false)
+
+
     const {
         register,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors },
     } = useForm()
 
+    async function fetchBook(){
+        try {
+            setIsLoader(true)
+            const response = await api.get(`/products/${id}`)
+            setValue('isbn', response.data.isbn)
+            setValue('name', response.data.livro)
+            setValue('author', response.data.autor)
+            setValue('year', response.data.ano)
+            setValue('genre', response.data.genero)
+            setValue('bookcover', response.data.image)
+            setValue('amount', response.data.quantidade)
+            setValue('sugestPrice', response.data.precoSugerido)
+            setValue('price', response.data.preco)
+            setValue('synopsis', response.data.sinopse)
+            setValue('language', response.data.idioma)
+            setValue('manufacturer', response.data.fabricante)
+            setValue('dimensions', response.data.dimensoes)
+
+            setIsLoader(false)
+        } catch (error) {
+            console.log(error)
+        }
+    }
     
     const onSubmit = async (data) => {
         try {
-            seIsLoading(true)
-            await api.post('/products', {
+            setIsLoading(true)
+            await api.put(`/products/${id}`, {
                 livro: data.name,
                 autor: data.author,
                 ano: data.year,
@@ -35,16 +66,20 @@ export default function ProductRegistration() {
                 fabricante: data.manufacturer,
                 dimensoes: data.dimensions,
             })
-            seIsLoading(false)
+            setIsLoading(false)
             reset()
-            const notify = () => toast.success('Produto adicionado ao estoque!')
-            notify()
+            router.push('/')
         } catch (error) {
             console.log(error)
             const notify = () => toast.error('Erro ao cadastrar!')
             notify()
         }
     }
+
+    useEffect(() => {
+        fetchBook() 
+        setIsLoading(false)
+    }, [])
 
     return (
         <>
@@ -65,7 +100,9 @@ export default function ProductRegistration() {
                     pauseOnHover
                     theme="light"
                 />
-                <Title>Cadastrar novo produto</Title>
+                <Title>Editar produto</Title>
+
+                {isLoader ? <Loader /> : 
                 <Container>
                     <Form onSubmit={handleSubmit(onSubmit)}>
                         <TwoInputsContainer>
@@ -302,7 +339,7 @@ export default function ProductRegistration() {
                         <SubmitContainer>
                             <input
                                 type="submit"
-                                value="Cadastrar"
+                                value="Atualizar produto"
                                 style={{ cursor: 'pointer' }}
                             />
                             { isLoading &&
@@ -322,6 +359,7 @@ export default function ProductRegistration() {
                         </SubmitContainer>
                     </Form>
                 </Container>
+                }
             </main>
         </>
     )
