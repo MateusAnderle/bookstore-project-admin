@@ -50,6 +50,9 @@ export default function Home() {
       <Head>
         <title>Sebus - Admin</title>
       </Head>
+         
+      <main>
+          <Title>Produtos cadastrados</Title>
           <ToastContainer
             style={{ marginTop: '60px' }}
             position="top-right"
@@ -63,8 +66,6 @@ export default function Home() {
             pauseOnHover
             theme="light"
           />
-      <main>
-          <Title>Produtos cadastrados</Title>
         <Container>
           <ul>
 
