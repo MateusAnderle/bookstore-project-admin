@@ -9,17 +9,25 @@ import Loader from '@/components/Loader'
 import { PencilSimple, Trash } from 'phosphor-react'
 import { Oval } from  'react-loader-spinner'
 import { useRouter } from 'next/router'
+import Pagination from '@/components/Pagination';
 
 export default function Home() {
   const router = useRouter()
   const [data, setData] = useState()
   const [isLoading, setIsLoading] = useState(true)
   const [iconIsLoading, setIconIsLoading] = useState(false)
+  const [page, setPage] = useState(0)
 
   async function fetchBooks() {
-    const response = await api.get('/products')
-    setData(response?.data)
-    setIsLoading(false)
+    try {
+      const response = await api.get(`/products?page=${page}`)
+      setData(response?.data)
+    } catch (error) {
+      console.log(error)
+      setData()
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   function editBook(id){
@@ -41,10 +49,24 @@ export default function Home() {
     }
   }
 
+  function previousClick() {
+    if (page <= 0) {
+      return
+    }
+    setPage(page - 1)
+  }
+
+  function nextClick() {
+    if (!data) {
+      return
+    }
+    setPage(page + 1)
+  }
+
   useEffect(() => {
     fetchBooks()
     setIsLoading(false)
-  }, [data])
+  }, [page])
 
   return (
     <>
@@ -73,55 +95,66 @@ export default function Home() {
           {isLoading ? (
           <Loader />
         ) : ( 
-          data?.length > 0 &&
+          data?.length > 0 ?
             data?.map((book) => {
               return (
-                <Booklist key={book._id}>
-                  
-                  <ImageAndContent>
-                    <Image src={book.image} height={120} width={120} alt=''/>
-
-                    <ContentWrapper>
-                      <BookTitle>{book.livro}</BookTitle>
-                      <BookDescription><B>Autor:</B> {book.autor}</BookDescription>
-                      <BookDescription><B>Ano de publicação:</B> {book.ano}</BookDescription>
-                      <BookDescription><B>Gênero:</B> {book.genero}</BookDescription>
-                      <BookDescription><B>Quantidade em estoque:</B> {book.quantidade}</BookDescription>
-                      <BookDescription><B>Preço unitário:</B> R$ {book.preco.toFixed(2)}</BookDescription>
-                    </ContentWrapper>
-                  </ImageAndContent>
-                  
-
-                  <ButtonIcons>
-                      { iconIsLoading &&
-                        <Oval
-                            height={35}
-                            width={35}
-                            color="#F00"
-                            wrapperStyle={{}}
-                            wrapperClass=""
-                            visible={true}
-                            ariaLabel='oval-loading'
-                            secondaryColor="#F00"
-                            strokeWidth={2}
-                            strokeWidthSecondary={2}
-                        />
-                      }
-
-                    <button onClick={() => editBook(book._id)}>
-                      <PencilSimple size={24} /> Editar 
-                    </button>
-                  
-                    <button onClick={() => deleteBook(book._id)}>
-                      <Trash size={24} /> Excluir 
-                    </button>
+                  <Booklist key={book._id}>
                     
-                  </ButtonIcons>
-                 </Booklist>
+                    <ImageAndContent>
+                      <Image src={book.image} height={120} width={120} alt=''/>
+
+                      <ContentWrapper>
+                        <BookTitle>{book.livro}</BookTitle>
+                        <BookDescription><B>Autor:</B> {book.autor}</BookDescription>
+                        <BookDescription><B>Ano de publicação:</B> {book.ano}</BookDescription>
+                        <BookDescription><B>Gênero:</B> {book.genero}</BookDescription>
+                        <BookDescription><B>Quantidade em estoque:</B> {book.quantidade}</BookDescription>
+                        <BookDescription><B>Preço unitário:</B> R$ {book.preco.toFixed(2)}</BookDescription>
+                      </ContentWrapper>
+                    </ImageAndContent>
+                    
+
+                    <ButtonIcons>
+                        { iconIsLoading &&
+                          <Oval
+                              height={35}
+                              width={35}
+                              color="#F00"
+                              wrapperStyle={{}}
+                              wrapperClass=""
+                              visible={true}
+                              ariaLabel='oval-loading'
+                              secondaryColor="#F00"
+                              strokeWidth={2}
+                              strokeWidthSecondary={2}
+                          />
+                        }
+
+                      <button onClick={() => editBook(book._id)}>
+                        <PencilSimple size={24} /> Editar 
+                      </button>
+                    
+                      <button onClick={() => deleteBook(book._id)}>
+                        <Trash size={24} /> Excluir 
+                      </button>
+                      
+                    </ButtonIcons>
+                  </Booklist>
               )
-            })
+            }) : 
+            <>
+              <h3>Algo deu errado</h3>
+              <p>Volte a página</p>
+            </>
           )}
           </ul>
+
+          <Pagination
+            pageNumber={page}
+            previousClick={previousClick}
+            nextClick={nextClick}
+          />
+
         </Container>
       </main>
     </>
