@@ -57,6 +57,10 @@ export default function Home() {
       const response = await api.get(`/products?page=${page - 1}`)
       setData(response?.data)
       setPage(page - 1)
+      window.scrollTo({
+        top: 100,
+        behavior: 'smooth',
+      })
     } catch (error) {
       console.log(error)
     }
@@ -67,6 +71,10 @@ export default function Home() {
       const response = await api.get(`/products?page=${page + 1}`)
       setData(response?.data)
       setPage(page + 1)
+      window.scrollTo({
+        top: 100,
+        behavior: 'smooth',
+      })
     } catch (error) {
       console.log(error)
     }
