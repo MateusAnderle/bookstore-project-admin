@@ -20,6 +20,7 @@ export default function Home() {
 
   async function fetchBooks() {
     try {
+      setIsLoading(true)
       const response = await api.get(`/products?page=${page}`)
       setData(response?.data)
     } catch (error) {
@@ -49,24 +50,31 @@ export default function Home() {
     }
   }
 
-  function previousClick() {
-    if (page <= 0) {
-      return
+  async function previousClick() {
+    if (page === 0) return
+
+    try {
+      const response = await api.get(`/products?page=${page - 1}`)
+      setData(response?.data)
+      setPage(page - 1)
+    } catch (error) {
+      console.log(error)
     }
-    setPage(page - 1)
   }
 
-  function nextClick() {
-    if (!data) {
-      return
+  async function nextClick() {
+    try {
+      const response = await api.get(`/products?page=${page + 1}`)
+      setData(response?.data)
+      setPage(page + 1)
+    } catch (error) {
+      console.log(error)
     }
-    setPage(page + 1)
   }
 
   useEffect(() => {
     fetchBooks()
-    setIsLoading(false)
-  }, [page])
+  }, [])
 
   return (
     <>
