@@ -2,7 +2,7 @@ import {
   NextPrev,
   PageContainer,
   PageCounter,
-} from '../../styles/components/pagination'
+} from "../../styles/components/pagination";
 
 export default function Pagination({
   pageNumber = 0,
@@ -14,10 +14,10 @@ export default function Pagination({
       <NextPrev variant="prev" onClick={previousClick}>
         «
       </NextPrev>
-      <PageCounter>Página {pageNumber + 1}</PageCounter>
+      <PageCounter>Página {pageNumber}</PageCounter>
       <NextPrev variant="next" onClick={nextClick}>
         »
       </NextPrev>
     </PageContainer>
-  )
+  );
 }

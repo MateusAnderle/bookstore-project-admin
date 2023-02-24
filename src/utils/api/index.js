@@ -1,5 +1,9 @@
-import axios from 'axios'
+import axios from "axios";
+
+// export const api = axios.create({
+//   baseURL: 'https://used-bookstore-api.herokuapp.com',
+// })
 
 export const api = axios.create({
-  baseURL: 'https://used-bookstore-api.herokuapp.com',
-})
+  baseURL: "http://localhost:3333",
+});

@@ -1,98 +1,108 @@
-import { B, BookDescription, Booklist, BookTitle, Container, ContentWrapper, Title, ImageAndContent, ButtonIcons } from '@/styles/pages/home'
-import Head from 'next/head'
-import Image from 'next/image'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useEffect, useState } from 'react'
-import { api } from '@/utils/api'
-import Loader from '@/components/Loader'
-import { PencilSimple, Trash } from 'phosphor-react'
-import { Oval } from  'react-loader-spinner'
-import { useRouter } from 'next/router'
-import Pagination from '@/components/Pagination';
+import {
+  B,
+  BookDescription,
+  Booklist,
+  BookTitle,
+  Container,
+  ContentWrapper,
+  Title,
+  ImageAndContent,
+  ButtonIcons,
+} from "@/styles/pages/home";
+import Head from "next/head";
+import Image from "next/image";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useEffect, useState } from "react";
+import { api } from "@/utils/api";
+import Loader from "@/components/Loader";
+import { PencilSimple, Trash } from "phosphor-react";
+import { Oval } from "react-loader-spinner";
+import { useRouter } from "next/router";
+import Pagination from "@/components/Pagination";
 
 export default function Home() {
-  const router = useRouter()
-  const [data, setData] = useState()
-  const [isLoading, setIsLoading] = useState(true)
-  const [iconIsLoading, setIconIsLoading] = useState(false)
-  const [page, setPage] = useState(0)
+  const router = useRouter();
+  const [data, setData] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [iconIsLoading, setIconIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [skip, setSkip] = useState(0);
+  const take = 10;
 
   async function fetchBooks() {
     try {
-      setIsLoading(true)
-      const response = await api.get(`/products?page=${page}`)
-      setData(response?.data)
+      setIsLoading(true);
+      const response = await api.get(`/products?skip=${skip}&take=${take}`);
+      setData(response?.data);
     } catch (error) {
-      console.log(error)
-      setData()
+      console.log(error);
+      setData();
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
-  function editBook(id){
-    router.push(`/editProduct/${id}`)
+  function editBook(id) {
+    router.push(`/editProduct/${id}`);
   }
 
-  async function deleteBook(id){
+  async function deleteBook(id) {
     try {
-      setIconIsLoading(true)
-      await api.delete(`/products/${id}`)
-      const notify = () => toast.success('Produto removido do estoque!')
-      notify()
-      setIconIsLoading(false)
-
+      setIconIsLoading(true);
+      await api.delete(`/products/${id}`);
+      const notify = () => toast.success("Produto removido do estoque!");
+      notify();
+      fetchBooks();
+      setIconIsLoading(false);
     } catch (error) {
-      console.log(error)
-      const notify = () => toast.error('Erro ao deletar produto!')
-      notify()
+      console.log(error);
+      const notify = () => toast.error("Erro ao deletar produto!");
+      notify();
     }
   }
 
   async function previousClick() {
-    if (page === 0) return
+    if (page === 1) return;
 
-    try {
-      const response = await api.get(`/products?page=${page - 1}`)
-      setData(response?.data)
-      setPage(page - 1)
-      window.scrollTo({
-        top: 100,
-        behavior: 'smooth',
-      })
-    } catch (error) {
-      console.log(error)
-    }
+    setSkip(skip - take);
+    setPage(page - 1);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
 
   async function nextClick() {
-    try {
-      const response = await api.get(`/products?page=${page + 1}`)
-      setData(response?.data)
-      setPage(page + 1)
-      window.scrollTo({
-        top: 100,
-        behavior: 'smooth',
-      })
-    } catch (error) {
-      console.log(error)
-    }
+    if (page === data?.pages) return;
+
+    setSkip(skip + take);
+    setPage(page + 1);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
 
   useEffect(() => {
-    fetchBooks()
-  }, [])
+    fetchBooks();
+  }, []);
+
+  useEffect(() => {
+    fetchBooks();
+  }, [skip]);
+
+  console.log(data?.products);
 
   return (
     <>
       <Head>
         <title>Sebus - Admin</title>
       </Head>
-         
+
       <main>
         <ToastContainer
-          style={{ marginTop: '60px' }}
+          style={{ marginTop: "60px" }}
           position="top-right"
           autoClose={3000}
           hideProgressBar={false}
@@ -104,75 +114,82 @@ export default function Home() {
           pauseOnHover
           theme="light"
         />
-          <Title>Produtos cadastrados</Title>
+        <Title>Produtos cadastrados</Title>
         <Container>
           <ul>
-
-          {isLoading ? (
-          <Loader />
-        ) : ( 
-          data?.length > 0 ?
-            data?.map((book) => {
-              return (
-                  <Booklist key={book._id}>
-                    
+            {isLoading ? (
+              <Loader />
+            ) : data?.products?.length > 0 ? (
+              data?.products?.map((book) => {
+                return (
+                  <Booklist key={book.id}>
                     <ImageAndContent>
-                      <Image src={book.image} height={120} width={120} alt=''/>
+                      <Image src={book.image} height={120} width={120} alt="" />
 
                       <ContentWrapper>
                         <BookTitle>{book.livro}</BookTitle>
-                        <BookDescription><B>Autor:</B> {book.autor}</BookDescription>
-                        <BookDescription><B>Ano de publicação:</B> {book.ano}</BookDescription>
-                        <BookDescription><B>Gênero:</B> {book.genero}</BookDescription>
-                        <BookDescription><B>Quantidade em estoque:</B> {book.quantidade}</BookDescription>
-                        <BookDescription><B>Preço unitário:</B> R$ {book.preco.toFixed(2)}</BookDescription>
+                        <BookDescription>
+                          <B>Autor:</B> {book.autor}
+                        </BookDescription>
+                        <BookDescription>
+                          <B>Ano de publicação:</B> {book.ano}
+                        </BookDescription>
+                        <BookDescription>
+                          <B>Gênero:</B> {book.genero}
+                        </BookDescription>
+                        <BookDescription>
+                          <B>Quantidade em estoque:</B> {book.quantidade}
+                        </BookDescription>
+                        <BookDescription>
+                          <B>Preço unitário:</B> R$ {book.preco.toFixed(2)}
+                        </BookDescription>
                       </ContentWrapper>
                     </ImageAndContent>
-                    
 
                     <ButtonIcons>
-                        { iconIsLoading &&
-                          <Oval
-                              height={35}
-                              width={35}
-                              color="#F00"
-                              wrapperStyle={{}}
-                              wrapperClass=""
-                              visible={true}
-                              ariaLabel='oval-loading'
-                              secondaryColor="#F00"
-                              strokeWidth={2}
-                              strokeWidthSecondary={2}
-                          />
-                        }
+                      {iconIsLoading && (
+                        <Oval
+                          height={35}
+                          width={35}
+                          color="#F00"
+                          wrapperStyle={{}}
+                          wrapperClass=""
+                          visible={true}
+                          ariaLabel="oval-loading"
+                          secondaryColor="#F00"
+                          strokeWidth={2}
+                          strokeWidthSecondary={2}
+                        />
+                      )}
 
-                      <button onClick={() => editBook(book._id)}>
-                        <PencilSimple size={24} /> Editar 
+                      <button onClick={() => editBook(book.id)}>
+                        <PencilSimple size={24} /> Editar
                       </button>
-                    
-                      <button onClick={() => deleteBook(book._id)}>
-                        <Trash size={24} /> Excluir 
+
+                      <button onClick={() => deleteBook(book.id)}>
+                        <Trash size={24} /> Excluir
                       </button>
-                      
                     </ButtonIcons>
                   </Booklist>
-              )
-            }) : 
-            <>
-              <h3>Algo deu errado</h3>
-              <p>Volte a página</p>
-            </>
-          )}
+                );
+              })
+            ) : (
+              <>
+                <h3>Algo deu errado</h3>
+                <p>Volte a página</p>
+              </>
+            )}
           </ul>
 
-          <Pagination
-            pageNumber={page}
-            previousClick={previousClick}
-            nextClick={nextClick}
-          />
-
+          {data?.pages >= 2 && (
+            <Pagination
+              pageNumber={page}
+              previousClick={previousClick}
+              nextClick={nextClick}
+            />
+          )}
         </Container>
       </main>
     </>
-  )
+  );
 }
