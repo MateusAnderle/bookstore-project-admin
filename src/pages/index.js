@@ -21,28 +21,23 @@ import { Oval } from "react-loader-spinner";
 import { useRouter } from "next/router";
 import Pagination from "@/components/Pagination";
 import { currencyBRL } from "@/utils/currencyFormatter";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
   const router = useRouter();
-  const [data, setData] = useState();
-  const [isLoading, setIsLoading] = useState(true);
   const [iconIsLoading, setIconIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [skip, setSkip] = useState(0);
   const take = 10;
 
-  async function fetchBooks() {
-    try {
-      setIsLoading(true);
-      const response = await api.get(`/products?skip=${skip}&take=${take}`);
-      setData(response?.data);
-    } catch (error) {
-      console.log(error);
-      setData();
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const fetchBooks = async () =>
+  await api.get(`/products?skip=${skip}&take=${take}`)
+
+const { isLoading, data: query } = useQuery({
+  queryKey: ['projects', page],
+  queryFn: () => fetchBooks(),
+  keepPreviousData: true,
+})
 
   function editBook(id) {
     router.push(`/editProduct/${id}`);
@@ -64,25 +59,25 @@ export default function Home() {
   }
 
   async function previousClick() {
-    if (page === 1) return;
+    if (page === 1) return
 
-    setSkip(skip - take);
-    setPage(page - 1);
+    setSkip(skip - take)
+    setPage(page - 1)
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
-    });
+      behavior: 'smooth',
+    })
   }
 
   async function nextClick() {
-    if (page === data?.pages) return;
+    if (page === query?.data?.pages) return
 
-    setSkip(skip + take);
-    setPage(page + 1);
+    setSkip(skip + take)
+    setPage(page + 1)
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
-    });
+      behavior: 'smooth',
+    })
   }
 
   useEffect(() => {
@@ -93,7 +88,6 @@ export default function Home() {
     fetchBooks();
   }, [skip]);
 
-  console.log(data?.products);
 
   return (
     <>
@@ -120,8 +114,8 @@ export default function Home() {
           <ul>
             {isLoading ? (
               <Loader />
-            ) : data?.products?.length > 0 ? (
-              data?.products?.map((book) => {
+            ) : query?.data?.products?.length > 0 ? (
+              query?.data?.products?.map((book) => {
                 return (
                   <Booklist key={book.id}>
                     <ImageAndContent>
@@ -182,7 +176,7 @@ export default function Home() {
             )}
           </ul>
 
-          {data?.pages >= 2 && (
+          {query?.data?.pages >= 2 && (
             <Pagination
               pageNumber={page}
               previousClick={previousClick}
