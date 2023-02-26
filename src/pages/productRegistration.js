@@ -23,7 +23,6 @@ export default function ProductRegistration() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
     try {
       seIsLoading(true);
       await api.post("/products", {

@@ -20,6 +20,7 @@ import { PencilSimple, Trash } from "phosphor-react";
 import { Oval } from "react-loader-spinner";
 import { useRouter } from "next/router";
 import Pagination from "@/components/Pagination";
+import { currencyBRL } from "@/utils/currencyFormatter";
 
 export default function Home() {
   const router = useRouter();
@@ -141,7 +142,7 @@ export default function Home() {
                           <B>Quantidade em estoque:</B> {book.quantidade}
                         </BookDescription>
                         <BookDescription>
-                          <B>Preço unitário:</B> R$ {book.preco.toFixed(2)}
+                          <B>Preço unitário: </B>{currencyBRL(book.preco)}
                         </BookDescription>
                       </ContentWrapper>
                     </ImageAndContent>
