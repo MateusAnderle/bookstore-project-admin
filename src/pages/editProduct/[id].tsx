@@ -15,6 +15,42 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loader from "@/components/Loader";
 import { BookCreateProps } from "../productRegistration";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const registrationSchema = yup
+  .object({
+    name: yup.string().required("Este campo é obrigatório"),
+    author: yup.string().required("Este campo é obrigatório"),
+    year: yup
+      .number()
+      .integer("Este campo não pode conter decimais")
+      .required("Este campo é obrigatório")
+      .typeError("Este campo só permite números"),
+    genre: yup.string().required("Este campo é obrigatório"),
+    bookcover: yup.string().required("Este campo é obrigatório"),
+    amount: yup
+      .number()
+      .required("Este campo é obrigatório")
+      .typeError("Este campo só permite números"),
+    sugestPrice: yup
+      .number()
+      .required("Este campo é obrigatório")
+      .typeError("Este campo só permite números"),
+    price: yup
+      .number()
+      .required("Este campo é obrigatório")
+      .typeError("Este campo só permite números"),
+    synopsis: yup.string().required("Este campo é obrigatório"),
+    language: yup.string().required("Este campo é obrigatório"),
+    isbn: yup
+      .number()
+      .required("Este campo é obrigatório")
+      .typeError("Este campo só permite números"),
+    manufacturer: yup.string().required("Este campo é obrigatório"),
+    dimensions: yup.string().required("Este campo é obrigatório"),
+  })
+  .required();
 
 export default function ProductRegistration() {
   const router = useRouter();
@@ -28,7 +64,7 @@ export default function ProductRegistration() {
     reset,
     setValue,
     formState: { errors },
-  } = useForm<BookCreateProps>();
+  } = useForm<BookCreateProps>({ resolver: yupResolver(registrationSchema) });
 
   async function fetchBook() {
     try {
@@ -56,20 +92,19 @@ export default function ProductRegistration() {
 
   const onSubmit = async (data: BookCreateProps) => {
     try {
-      console.log(data);
       setIsLoading(true);
       await api.put(`/products/${id}`, {
         livro: data.name,
         autor: data.author,
-        ano: data.year,
+        ano: Number(data.year),
         genero: data.genre,
         image: data.bookcover,
-        quantidade: data.amount,
+        quantidade: Number(data.amount),
         precoSugerido: Number(data.sugestPrice),
         preco: Number(data.price),
         sinopse: data.synopsis,
         idioma: data.language,
-        isbn: data.isbn,
+        isbn: String(data.isbn),
         fabricante: data.manufacturer,
         dimensoes: data.dimensions,
       });
@@ -120,8 +155,9 @@ export default function ProductRegistration() {
                   ISBN:
                   <input
                     type="number"
+                    step="1"
                     placeholder="Verifique o ISBN"
-                    {...register("isbn", { required: "ISBN obrigatório" })}
+                    {...register("isbn")}
                   />
                   {errors.isbn && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -133,11 +169,8 @@ export default function ProductRegistration() {
                 <label>
                   Nome do produto:
                   <input
-                    type="text"
                     placeholder="Digite aqui o nome do produto"
-                    {...register("name", {
-                      required: "Nome do produto obrigatório",
-                    })}
+                    {...register("name")}
                   />
                   {errors.name && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -151,11 +184,8 @@ export default function ProductRegistration() {
                 <label>
                   Autor:
                   <input
-                    type="text"
                     placeholder="Digite aqui o autor"
-                    {...register("author", {
-                      required: "Autor obrigatório",
-                    })}
+                    {...register("author")}
                   />
                   {errors.author && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -168,10 +198,9 @@ export default function ProductRegistration() {
                   Ano de publicação:
                   <input
                     type="number"
+                    step="1"
                     placeholder="Digite aqui o ano de publicação"
-                    {...register("year", {
-                      required: "Ano de publicação obrigatório",
-                    })}
+                    {...register("year")}
                   />
                   {errors.year && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -185,11 +214,8 @@ export default function ProductRegistration() {
                 <label>
                   Gênero:
                   <input
-                    type="text"
                     placeholder="Digite aqui o gênero do livro"
-                    {...register("genre", {
-                      required: "Gênero obrigatório",
-                    })}
+                    {...register("genre")}
                   />
                   {errors.genre && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -201,11 +227,8 @@ export default function ProductRegistration() {
                 <label>
                   Capa:
                   <input
-                    type="text"
                     placeholder="Selecione uma imagem (URL) com a capa do livro"
-                    {...register("bookcover", {
-                      required: "Imagem de capa obrigatória",
-                    })}
+                    {...register("bookcover")}
                   />
                   {errors.bookcover && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -220,10 +243,9 @@ export default function ProductRegistration() {
                   Quantidade:
                   <input
                     type="number"
+                    step="1"
                     placeholder="Digite aqui a quantidade que deseja cadastrar"
-                    {...register("amount", {
-                      required: "Quantidade obrigatória",
-                    })}
+                    {...register("amount")}
                   />
                   {errors.amount && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -236,10 +258,9 @@ export default function ProductRegistration() {
                   Preço sugerido pela editora:
                   <input
                     type="number"
+                    step="0.01"
                     placeholder="Digite aqui o preço sugerido"
-                    {...register("sugestPrice", {
-                      required: "Preço sugerido obrigatório",
-                    })}
+                    {...register("sugestPrice")}
                   />
                   {errors.sugestPrice && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -254,10 +275,9 @@ export default function ProductRegistration() {
                   Preço de venda:
                   <input
                     type="number"
+                    step="0.01"
                     placeholder="Digite aqui o preço de venda"
-                    {...register("price", {
-                      required: "Preço de venda obrigatório",
-                    })}
+                    {...register("price")}
                   />
                   {errors.price && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -269,11 +289,8 @@ export default function ProductRegistration() {
                 <label>
                   Sinopse:
                   <input
-                    type="text"
                     placeholder="Digite uma sinopse para esse livro"
-                    {...register("synopsis", {
-                      required: "Campo obrigatório",
-                    })}
+                    {...register("synopsis")}
                   />
                   {errors.synopsis && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -287,11 +304,8 @@ export default function ProductRegistration() {
                 <label>
                   Idioma do livro:
                   <input
-                    type="text"
                     placeholder="Digite aqui o idioma do produto"
-                    {...register("language", {
-                      required: "Idioma obrigatório",
-                    })}
+                    {...register("language")}
                   />
                   {errors.language && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -303,11 +317,8 @@ export default function ProductRegistration() {
                 <label>
                   Editora:
                   <input
-                    type="text"
                     placeholder="Digite a editora do produto"
-                    {...register("manufacturer", {
-                      required: "Editora obrigatório",
-                    })}
+                    {...register("manufacturer")}
                   />
                   {errors.manufacturer && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
@@ -321,11 +332,8 @@ export default function ProductRegistration() {
                 <label>
                   Dimensões do livro:
                   <input
-                    type="text"
                     placeholder="Digite aqui as dimensões do produto"
-                    {...register("dimensions", {
-                      required: "Dimensões obrigatórias",
-                    })}
+                    {...register("dimensions")}
                   />
                   {errors.dimensions && (
                     <span style={{ color: "#f00", fontStyle: "italic" }}>
