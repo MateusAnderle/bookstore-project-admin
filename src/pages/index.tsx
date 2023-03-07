@@ -23,6 +23,24 @@ import Pagination from "@/components/Pagination";
 import { currencyBRL } from "@/utils/currencyFormatter";
 import { useQuery } from "@tanstack/react-query";
 
+export interface BookReceivedProps {
+  id: string;
+  livro: string;
+  autor: string;
+  ano: number;
+  genero: string;
+  image: string;
+  quantidade: number;
+  precoSugerido: number;
+  preco: number;
+  sinopse: string;
+  idioma: string;
+  isbn: string;
+  fabricante: string;
+  dimensoes: string;
+  created_at: string;
+}
+
 export default function Home() {
   const router = useRouter();
   const [iconIsLoading, setIconIsLoading] = useState(false);
@@ -31,19 +49,19 @@ export default function Home() {
   const take = 10;
 
   const fetchBooks = async () =>
-  await api.get(`/products?skip=${skip}&take=${take}`)
+    await api.get(`/products?skip=${skip}&take=${take}`);
 
-const { isLoading, data: query } = useQuery({
-  queryKey: ['projects', page],
-  queryFn: () => fetchBooks(),
-  keepPreviousData: true,
-})
+  const { isLoading, data: query } = useQuery({
+    queryKey: ["projects", page],
+    queryFn: () => fetchBooks(),
+    keepPreviousData: true,
+  });
 
-  function editBook(id) {
+  function editBook(id: string) {
     router.push(`/editProduct/${id}`);
   }
 
-  async function deleteBook(id) {
+  async function deleteBook(id: string) {
     try {
       setIconIsLoading(true);
       await api.delete(`/products/${id}`);
@@ -59,35 +77,36 @@ const { isLoading, data: query } = useQuery({
   }
 
   async function previousClick() {
-    if (page === 1) return
+    if (page === 1) return;
 
-    setSkip(skip - take)
-    setPage(page - 1)
+    setSkip(skip - take);
+    setPage(page - 1);
     window.scrollTo({
       top: 0,
-      behavior: 'smooth',
-    })
+      behavior: "smooth",
+    });
   }
 
   async function nextClick() {
-    if (page === query?.data?.pages) return
+    if (page === query?.data?.pages) return;
 
-    setSkip(skip + take)
-    setPage(page + 1)
+    setSkip(skip + take);
+    setPage(page + 1);
     window.scrollTo({
       top: 0,
-      behavior: 'smooth',
-    })
+      behavior: "smooth",
+    });
   }
 
   useEffect(() => {
     fetchBooks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     fetchBooks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skip]);
-
 
   return (
     <>
@@ -115,7 +134,7 @@ const { isLoading, data: query } = useQuery({
             {isLoading ? (
               <Loader />
             ) : query?.data?.products?.length > 0 ? (
-              query?.data?.products?.map((book) => {
+              query?.data?.products?.map((book: BookReceivedProps) => {
                 return (
                   <Booklist key={book.id}>
                     <ImageAndContent>
@@ -136,7 +155,8 @@ const { isLoading, data: query } = useQuery({
                           <B>Quantidade em estoque:</B> {book.quantidade}
                         </BookDescription>
                         <BookDescription>
-                          <B>Preço unitário: </B>{currencyBRL(book.preco)}
+                          <B>Preço unitário: </B>
+                          {currencyBRL(book.preco)}
                         </BookDescription>
                       </ContentWrapper>
                     </ImageAndContent>

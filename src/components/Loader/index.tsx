@@ -1,5 +1,5 @@
-import { LoaderContainer } from '../../styles/components/loader'
-import { Oval } from 'react-loader-spinner'
+import { LoaderContainer } from "../../styles/components/loader";
+import { Oval } from "react-loader-spinner";
 
 export default function Loader() {
   return (
@@ -14,5 +14,5 @@ export default function Loader() {
         secondaryColor="$F00"
       />
     </LoaderContainer>
-  )
+  );
 }

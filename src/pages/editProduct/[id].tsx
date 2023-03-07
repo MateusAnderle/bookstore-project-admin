@@ -14,6 +14,7 @@ import { Oval } from "react-loader-spinner";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loader from "@/components/Loader";
+import { BookCreateProps } from "../productRegistration";
 
 export default function ProductRegistration() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function ProductRegistration() {
     reset,
     setValue,
     formState: { errors },
-  } = useForm();
+  } = useForm<BookCreateProps>();
 
   async function fetchBook() {
     try {
@@ -53,7 +54,7 @@ export default function ProductRegistration() {
     }
   }
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: BookCreateProps) => {
     try {
       console.log(data);
       setIsLoading(true);
@@ -85,6 +86,7 @@ export default function ProductRegistration() {
   useEffect(() => {
     fetchBook();
     setIsLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -117,7 +119,6 @@ export default function ProductRegistration() {
                 <label>
                   ISBN:
                   <input
-                    name="isbn"
                     type="number"
                     placeholder="Verifique o ISBN"
                     {...register("isbn", { required: "ISBN obrigatório" })}
@@ -132,7 +133,6 @@ export default function ProductRegistration() {
                 <label>
                   Nome do produto:
                   <input
-                    name="name"
                     type="text"
                     placeholder="Digite aqui o nome do produto"
                     {...register("name", {
@@ -151,7 +151,6 @@ export default function ProductRegistration() {
                 <label>
                   Autor:
                   <input
-                    name="author"
                     type="text"
                     placeholder="Digite aqui o autor"
                     {...register("author", {
@@ -168,7 +167,6 @@ export default function ProductRegistration() {
                 <label>
                   Ano de publicação:
                   <input
-                    name="year"
                     type="number"
                     placeholder="Digite aqui o ano de publicação"
                     {...register("year", {
@@ -187,7 +185,6 @@ export default function ProductRegistration() {
                 <label>
                   Gênero:
                   <input
-                    name="genre"
                     type="text"
                     placeholder="Digite aqui o gênero do livro"
                     {...register("genre", {
@@ -204,7 +201,6 @@ export default function ProductRegistration() {
                 <label>
                   Capa:
                   <input
-                    name="bookcover"
                     type="text"
                     placeholder="Selecione uma imagem (URL) com a capa do livro"
                     {...register("bookcover", {
@@ -223,7 +219,6 @@ export default function ProductRegistration() {
                 <label>
                   Quantidade:
                   <input
-                    name="amount"
                     type="number"
                     placeholder="Digite aqui a quantidade que deseja cadastrar"
                     {...register("amount", {
@@ -240,7 +235,6 @@ export default function ProductRegistration() {
                 <label>
                   Preço sugerido pela editora:
                   <input
-                    name="sugestPrice"
                     type="number"
                     placeholder="Digite aqui o preço sugerido"
                     {...register("sugestPrice", {
@@ -259,7 +253,6 @@ export default function ProductRegistration() {
                 <label>
                   Preço de venda:
                   <input
-                    name="price"
                     type="number"
                     placeholder="Digite aqui o preço de venda"
                     {...register("price", {
@@ -276,7 +269,6 @@ export default function ProductRegistration() {
                 <label>
                   Sinopse:
                   <input
-                    name="synopsis"
                     type="text"
                     placeholder="Digite uma sinopse para esse livro"
                     {...register("synopsis", {
@@ -295,7 +287,6 @@ export default function ProductRegistration() {
                 <label>
                   Idioma do livro:
                   <input
-                    name="language"
                     type="text"
                     placeholder="Digite aqui o idioma do produto"
                     {...register("language", {
@@ -312,7 +303,6 @@ export default function ProductRegistration() {
                 <label>
                   Editora:
                   <input
-                    name="manufacturer"
                     type="text"
                     placeholder="Digite a editora do produto"
                     {...register("manufacturer", {
@@ -331,7 +321,6 @@ export default function ProductRegistration() {
                 <label>
                   Dimensões do livro:
                   <input
-                    name="dimensions"
                     type="text"
                     placeholder="Digite aqui as dimensões do produto"
                     {...register("dimensions", {

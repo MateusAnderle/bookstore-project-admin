@@ -15,25 +15,35 @@ import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
+export interface BookCreateProps {
+  id: string;
+  name: string;
+  author: string;
+  year: number;
+  genre: string;
+  bookcover: string;
+  amount: number;
+  sugestPrice: number;
+  price: number;
+  synopsis: string;
+  language: string;
+  isbn: string;
+  manufacturer: string;
+  dimensions: string;
+  created_at: string;
+}
+
 const registrationSchema = yup
   .object({
-    name: yup
-      .string("Este campo só permite texto")
-      .required("Este campo é obrigatório"),
-    author: yup
-      .string("Este campo só permite texto")
-      .required("Este campo é obrigatório"),
+    name: yup.string().required("Este campo é obrigatório"),
+    author: yup.string().required("Este campo é obrigatório"),
     year: yup
       .number()
       .integer("Este campo não pode conter decimais")
       .required("Este campo é obrigatório")
       .typeError("Este campo só permite números"),
-    genre: yup
-      .string("Este campo só permite texto")
-      .required("Este campo é obrigatório"),
-    bookcover: yup
-      .string("Este campo só permite texto")
-      .required("Este campo é obrigatório"),
+    genre: yup.string().required("Este campo é obrigatório"),
+    bookcover: yup.string().required("Este campo é obrigatório"),
     amount: yup
       .number()
       .required("Este campo é obrigatório")
@@ -46,22 +56,14 @@ const registrationSchema = yup
       .number()
       .required("Este campo é obrigatório")
       .typeError("Este campo só permite números"),
-    synopsis: yup
-      .string("Este campo só permite texto")
-      .required("Este campo é obrigatório"),
-    language: yup
-      .string("Este campo só permite texto")
-      .required("Este campo é obrigatório"),
+    synopsis: yup.string().required("Este campo é obrigatório"),
+    language: yup.string().required("Este campo é obrigatório"),
     isbn: yup
       .number()
       .required("Este campo é obrigatório")
       .typeError("Este campo só permite números"),
-    manufacturer: yup
-      .string("Este campo só permite texto")
-      .required("Este campo é obrigatório"),
-    dimensions: yup
-      .string("Este campo só permite texto")
-      .required("Este campo é obrigatório"),
+    manufacturer: yup.string().required("Este campo é obrigatório"),
+    dimensions: yup.string().required("Este campo é obrigatório"),
   })
   .required();
 
@@ -72,9 +74,9 @@ export default function ProductRegistration() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(registrationSchema) });
+  } = useForm<BookCreateProps>({ resolver: yupResolver(registrationSchema) });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: BookCreateProps) => {
     try {
       seIsLoading(true);
       await api.post("/products", {
@@ -129,7 +131,6 @@ export default function ProductRegistration() {
               <label>
                 ISBN:
                 <input
-                  name="isbn"
                   type="number"
                   step="1"
                   placeholder="Verifique o ISBN"
@@ -145,7 +146,6 @@ export default function ProductRegistration() {
               <label>
                 Nome do produto:
                 <input
-                  name="name"
                   placeholder="Digite aqui o nome do produto"
                   {...register("name")}
                 />
@@ -161,7 +161,6 @@ export default function ProductRegistration() {
               <label>
                 Autor:
                 <input
-                  name="author"
                   placeholder="Digite aqui o autor"
                   {...register("author")}
                 />
@@ -175,7 +174,6 @@ export default function ProductRegistration() {
               <label>
                 Ano de publicação:
                 <input
-                  name="year"
                   type="number"
                   step="1"
                   placeholder="Digite aqui o ano de publicação"
@@ -193,7 +191,6 @@ export default function ProductRegistration() {
               <label>
                 Gênero:
                 <input
-                  name="genre"
                   placeholder="Digite aqui o gênero do livro"
                   {...register("genre")}
                 />
@@ -207,7 +204,6 @@ export default function ProductRegistration() {
               <label>
                 Capa:
                 <input
-                  name="bookcover"
                   placeholder="Selecione uma imagem (URL) com a capa do livro"
                   {...register("bookcover")}
                 />
@@ -223,7 +219,6 @@ export default function ProductRegistration() {
               <label>
                 Quantidade:
                 <input
-                  name="amount"
                   type="number"
                   step="1"
                   placeholder="Digite aqui a quantidade que deseja cadastrar"
@@ -239,7 +234,6 @@ export default function ProductRegistration() {
               <label>
                 Preço sugerido pela editora:
                 <input
-                  name="sugestPrice"
                   type="number"
                   step="0.01"
                   placeholder="Digite aqui o preço sugerido"
@@ -257,7 +251,6 @@ export default function ProductRegistration() {
               <label>
                 Preço de venda:
                 <input
-                  name="price"
                   type="number"
                   step="0.01"
                   placeholder="Digite aqui o preço de venda"
@@ -273,7 +266,6 @@ export default function ProductRegistration() {
               <label>
                 Sinopse:
                 <input
-                  name="synopsis"
                   placeholder="Digite uma sinopse para esse livro"
                   {...register("synopsis")}
                 />
@@ -289,7 +281,6 @@ export default function ProductRegistration() {
               <label>
                 Idioma do livro:
                 <input
-                  name="language"
                   placeholder="Digite aqui o idioma do produto"
                   {...register("language")}
                 />
@@ -303,7 +294,6 @@ export default function ProductRegistration() {
               <label>
                 Editora:
                 <input
-                  name="manufacturer"
                   placeholder="Digite a editora do produto"
                   {...register("manufacturer")}
                 />
@@ -319,7 +309,6 @@ export default function ProductRegistration() {
               <label>
                 Dimensões do livro:
                 <input
-                  name="dimensions"
                   placeholder="Digite aqui as dimensões do produto"
                   {...register("dimensions")}
                 />
